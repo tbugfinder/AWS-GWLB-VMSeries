@@ -8,9 +8,9 @@ data "template_file" "handoff-state-file" {
 
 locals {
   output_json_str = jsonencode({
-    "access_key"              = var.access_key
-    "secret_key"              = var.secret_key
-    "region"                  = var.region
+    #    "access_key"              = var.access_key
+    #    "secret_key"              = var.secret_key
+    #    "region"                  = var.region
     "deployment_id"           = random_id.deployment_id.hex
     "sec_vpc"                 = aws_vpc.sec_vpc.id
     "sec_data_subnet"         = aws_subnet.sec_data_subnet[*].id
@@ -49,11 +49,11 @@ resource "null_resource" "handoff-state-json" {
 
 resource "null_resource" "gateway-load-balancer" {
   provisioner "local-exec" {
-    command = "python3 gwlb.py create"
+    command = "python3 ${path.module}/gwlb.py create"
   }
   provisioner "local-exec" {
     when    = destroy
-    command = "python3 gwlb.py destroy"
+    command = "python3 ${path.module}/gwlb.py destroy"
   }
   depends_on = [null_resource.handoff-state-json, aws_instance.firewall_instance]
 }

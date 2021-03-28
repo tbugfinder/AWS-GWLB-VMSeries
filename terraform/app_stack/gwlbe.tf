@@ -8,9 +8,9 @@ data "template_file" "handoff-state-file" {
 
 locals {
   output_json_str = jsonencode({
-    "access_key"           = var.access_key
-    "secret_key"           = var.secret_key
-    "region"               = var.region
+    #    "access_key"           = var.access_key
+    #    "secret_key"           = var.secret_key
+    #    "region"               = var.region
     "deployment_id"        = random_id.deployment_id.hex
     "app_vpc"              = aws_vpc.app_vpc.id
     "app_agwe_subnet"      = aws_subnet.app_agwe_subnet.id
@@ -43,11 +43,11 @@ resource "null_resource" "handoff-state-json" {
 
 resource "null_resource" "gateway-load-balancer-endpoint" {
   provisioner "local-exec" {
-    command = "python3 gwlbe.py create"
+    command = "python3 ${path.module}/gwlbe.py create"
   }
   provisioner "local-exec" {
     when    = destroy
-    command = "python3 gwlbe.py destroy"
+    command = "python3 ${path.module}/gwlbe.py destroy"
   }
   depends_on = [null_resource.handoff-state-json]
 }

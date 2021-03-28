@@ -361,7 +361,7 @@ def main():
         return 0, {'State': 'Destroy Complete'}
 
     # Fetch state info
-    state_file = 'handoff_state.json'
+    state_file = 'security_stack/handoff_state.json'
     with open(state_file, 'r') as inputfile:
         state_info = json.load(inputfile)
 
@@ -369,9 +369,9 @@ def main():
     pprint(state_info)
 
     # Get Credentials
-    secret_key_id = state_info['access_key']
-    secret_access_key = state_info['secret_key']
-    region = state_info['region']
+    #secret_key_id = state_info['access_key']
+    #secret_access_key = state_info['secret_key']
+    #region = state_info['region']
     deployment_id = state_info['deployment_id']
     sec_vpc = state_info['sec_vpc']
     sec_data_subnet = state_info['sec_data_subnet']
@@ -383,34 +383,39 @@ def main():
     tgw_sec_attach_id = state_info['tgw_sec_attach_id']
 
     # Create Gateway Load Balancer Resources for Boto3
-    ec2_client = boto3.client('ec2',
-                              aws_access_key_id=secret_key_id,
-                              aws_secret_access_key=secret_access_key,
-                              region_name=region)
+    #ec2_client = boto3.client('ec2',
+    #                          aws_access_key_id=secret_key_id,
+    #                          aws_secret_access_key=secret_access_key,
+    #                          region_name=region)
+    ec2_client = boto3.client('ec2')
     try:
         loader_client = loaders.create_loader()
         loader_client.load_service_model('elbv2-gwlb', 'service-2')
         loader_client.load_service_model('ec2-gwlbe', 'service-2')
 
         # Create Boto3 resources
-        agw_client = boto3.client('elbv2-gwlb',
-                                  aws_access_key_id=secret_key_id,
-                                  aws_secret_access_key=secret_access_key,
-                                  region_name=region)
-        agwe_client = boto3.client('ec2-gwlbe',
-                                   aws_access_key_id=secret_key_id,
-                                   aws_secret_access_key=secret_access_key,
-                                   region_name=region)
+        #agw_client = boto3.client('elbv2-gwlb',
+        #                          aws_access_key_id=secret_key_id,
+        #                          aws_secret_access_key=secret_access_key,
+        #                          region_name=region)
+        agw_client = boto3.client('elbv2-gwlb')
+        #agwe_client = boto3.client('ec2-gwlbe',
+        #                           aws_access_key_id=secret_key_id,
+        #                           aws_secret_access_key=secret_access_key,
+        #                           region_name=region)
+        agwe_client = boto3.client('ec2-gwlbe')
     except:
         # Create Boto3 resources
-        agw_client = boto3.client('elbv2',
-                                  aws_access_key_id=secret_key_id,
-                                  aws_secret_access_key=secret_access_key,
-                                  region_name=region)
-        agwe_client = boto3.client('ec2',
-                                   aws_access_key_id=secret_key_id,
-                                   aws_secret_access_key=secret_access_key,
-                                   region_name=region)
+        #agw_client = boto3.client('elbv2',
+        #                          aws_access_key_id=secret_key_id,
+        #                          aws_secret_access_key=secret_access_key,
+        #                          region_name=region)
+        agw_client = boto3.client('elbv2')
+        #agwe_client = boto3.client('ec2',
+        #                           aws_access_key_id=secret_key_id,
+        #                           aws_secret_access_key=secret_access_key,
+        #                           region_name=region)
+        agwe_client = boto3.client('ec2')
 
     if sys.argv[1] == 'create':
         create_status, create_output = create()
